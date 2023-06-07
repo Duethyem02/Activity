@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "95326899829",
+    "project_id": "activity-point-monitor",
+    "storage_bucket": "activity-point-monitor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95326899829:android:3aca0a2d53f3d3ab9e323c",
+        "android_client_info": {
+          "package_name": "com.example.activity_point_monitoring_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "95326899829-fmj9vdbajl59nbtig7je2i4bodcg3v81.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbmrnlA7Hzr4gYXzG94w1FP62fkgUk1u4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "95326899829-fmj9vdbajl59nbtig7je2i4bodcg3v81.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "95326899829-ftc3ha38fvdjij5rhm2rji016305b8vo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.activitypointmonitoringproject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
