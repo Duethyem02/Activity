@@ -30,15 +30,25 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  firebase_auth:
+  image_picker:
+  cloud_firestore:
+  firebase_storage:
+  file_picker:
+  hexcolor:
+  firebase_database:
+  fluttertoast:
+  flutter_pdfview: ^2.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  firebase_core: ^2.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -90,4 +100,19 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
   assets:
     - lib/main.dart
+    - ios/
+    - ios/Runner/
+    - ios/Runner/Base.lproj/
+    - ios/Runner/Assets.xcassets/
+    - ios/Runner/Assets.xcassets/AppIcon.appiconset/
+    - ios/Runner/Assets.xcassets/LaunchImage.imageset/
+    - ios/Flutter/
+    - ios/Runner.xcodeproj/
+    - ios/Runner.xcodeproj/xcshareddata/
+    - ios/Runner.xcodeproj/xcshareddata/xcschemes/
+    - ios/Runner.xcodeproj/project.xcworkspace/
+    - ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/
+    - ios/Runner.xcworkspace/
+    - ios/Runner.xcworkspace/xcshareddata/
+    - lib/AABDI.png
 

@@ -39,8 +39,8 @@ class UserRepository {
   }
 }
 
-class Sprofile extends StatelessWidget {
-  Sprofile({Key? key, required this.uid}) : super(key: key);
+class Fprofile extends StatelessWidget {
+  Fprofile({Key? key, required this.uid}) : super(key: key);
 
   final String uid;
 
@@ -50,7 +50,7 @@ class Sprofile extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.indigo[100],
       appBar: AppBar(
-        title: Text('Student'),
+        title: Text('Faculty'),
         centerTitle: true,
         backgroundColor: Colors.indigo[100],
         elevation: 0,
@@ -66,7 +66,7 @@ class Sprofile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Center(
-                    child: Image.network('https://cdn0.iconfinder.com/data/icons/education-line-circle-1/614/243_-_Male_Student-512.png',width: 150,height: 150,fit: BoxFit.cover,),
+                    child: Image.network('https://th.bing.com/th/id/R.8f9d91c32c30a4b3ae17b2edb4b14dbc?rik=IC53xJ%2fTFxKUig&riu=http%3a%2f%2ficon-library.com%2fimages%2fstaff-icon-png%2fstaff-icon-png-15.jpg&ehk=ZJejg%2fns9362kI67D57YbUheY2bPz9q2lIjhuubL6hs%3d&risl=&pid=ImgRaw&r=0',width: 150,height: 150,fit: BoxFit.cover,),
                   ),
                   Divider(
                     height: 60,
@@ -91,7 +91,7 @@ class Sprofile extends StatelessWidget {
                   ),
                   SizedBox(height: 30),
                   Text(
-                    'Branch',
+                    'Department',
                     style: TextStyle(
                         color: Colors.grey[600],
                         letterSpacing: 2
@@ -109,7 +109,7 @@ class Sprofile extends StatelessWidget {
                   ),
                   SizedBox(height: 30),
                   Text(
-                    'Year',
+                    'University ID',
                     style: TextStyle(
                         color: Colors.grey[600],
                         letterSpacing: 2
@@ -126,42 +126,6 @@ class Sprofile extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 30),
-                  /*Text(
-          'Batch',
-          style: TextStyle(
-              color: Colors.grey,
-              letterSpacing: 2
-          ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          'E',
-          style: TextStyle(
-              color: Colors.black,
-              letterSpacing: 2,
-              fontSize: 28,
-              fontWeight: FontWeight.bold
-          ),
-        ),
-        SizedBox(height: 30),
-        Text(
-          'Branch',
-          style: TextStyle(
-              color: Colors.grey[600],
-              letterSpacing: 2
-          ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          'EEE',
-          style: TextStyle(
-              color: Colors.black,
-              letterSpacing: 2,
-              fontSize: 28,
-              fontWeight: FontWeight.bold
-          ),
-        ),
-        SizedBox(height: 30),*/
                   Row(
                     children: <Widget>[
                       Icon(
@@ -201,15 +165,85 @@ class Sprofile extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => PdfUploader(),
+                builder: (context) => FacultyPage(),
               ),
             );
           },
           style:ElevatedButton.styleFrom(backgroundColor:Colors.indigo[400],foregroundColor: Colors.white,),
-          child: const Text('Upload Certificate',style: TextStyle(fontSize: 21),),
+          child: const Text('Verify Certificate',style: TextStyle(fontSize: 21),),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}
+
+class FacultyPage extends StatefulWidget {
+  @override
+  _FacultyPageState createState() => _FacultyPageState();
+}
+
+class _FacultyPageState extends State<FacultyPage> {
+  String selectedClass="";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Student List'),
+      ),
+      body: Column(
+        children: [
+          DropdownButton(
+            hint: Text('Select a class'),
+            value: selectedClass,
+            onChanged: (value) {
+              setState(() {
+                selectedClass = value!;
+              });
+            },
+            items: [
+              DropdownMenuItem(
+                value: 'A',
+                child: Text('Class A'),
+              ),
+              DropdownMenuItem(
+                value: 'B',
+                child: Text('Class B'),
+              ),
+              DropdownMenuItem(
+                value: 'C',
+                child: Text('Class C'),
+              ),
+            ],
+          ),
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .where('batch', isEqualTo: selectedClass)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+              final students = snapshot.data!.docs;
+              return Expanded(
+                child: ListView.builder(
+                  itemCount: students.length,
+                  itemBuilder: (context, index) {
+                    final student = students[index];
+                    return ListTile(
+                      title: Text(student['name']),
+                      subtitle: Text(student['email']),
+                      // Display any other relevant information here
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
