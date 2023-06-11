@@ -155,7 +155,7 @@ class _tloginwindowState extends State<tloginwindow> {
                         _formkey.currentState!.save();
                         isLogin
                             ? AuthServices.signinUser(email, password, context)
-                            : AuthServices.signupUser(email, password, name,role,university_id,department,'null',context);
+                            : AuthServices.signupUser(email, password, name,role,university_id,department,0,context);
                       }
                     },
                   )

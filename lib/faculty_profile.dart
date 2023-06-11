@@ -170,7 +170,7 @@ class Fprofile extends StatelessWidget {
             );
           },
           style:ElevatedButton.styleFrom(backgroundColor:Colors.indigo[400],foregroundColor: Colors.white,),
-          child: const Text('Verify Certificate',style: TextStyle(fontSize: 21),),
+          child: const Text('Check Points',style: TextStyle(fontSize: 21),),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -184,7 +184,7 @@ class FacultyPage extends StatefulWidget {
 }
 
 class _FacultyPageState extends State<FacultyPage> {
-  String selectedClass="";
+  String selectedClass="2019";
 
   @override
   Widget build(BuildContext context) {
@@ -194,8 +194,8 @@ class _FacultyPageState extends State<FacultyPage> {
       ),
       body: Column(
         children: [
+          Text('Select a year'),
           DropdownButton(
-            hint: Text('Select a class'),
             value: selectedClass,
             onChanged: (value) {
               setState(() {
@@ -204,42 +204,52 @@ class _FacultyPageState extends State<FacultyPage> {
             },
             items: [
               DropdownMenuItem(
-                value: 'A',
-                child: Text('Class A'),
+                value: "2019",
+                child: Text('2019'),
               ),
               DropdownMenuItem(
-                value: 'B',
-                child: Text('Class B'),
+                value: "2020",
+                child: Text('2020'),
               ),
               DropdownMenuItem(
-                value: 'C',
-                child: Text('Class C'),
+                value: "2021",
+                child: Text('2021'),
+              ),
+              DropdownMenuItem(
+                value: "2022",
+                child: Text('2022'),
+              ),
+              DropdownMenuItem(
+                value: "2023",
+                child: Text('2023'),
               ),
             ],
           ),
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('users')
-                .where('batch', isEqualTo: selectedClass)
+                .where('Year', isEqualTo: selectedClass)
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return CircularProgressIndicator();
               }
-              final students = snapshot.data!.docs;
-              return Expanded(
+              else{
+                final students = snapshot.data!.docs;
+                return Expanded(
                 child: ListView.builder(
-                  itemCount: students.length,
-                  itemBuilder: (context, index) {
-                    final student = students[index];
-                    return ListTile(
-                      title: Text(student['name']),
-                      subtitle: Text(student['email']),
-                      // Display any other relevant information here
-                    );
-                  },
+                itemCount: students.length,
+                itemBuilder: (context, index) {
+                final student = students[index];
+                return ListTile(
+                title: Text(student['Name']),
+                subtitle: Text(student['Point'].toString()),
+                // Display any other relevant information here
+                );
+                },
                 ),
-              );
+                );
+               }
             },
           ),
         ],

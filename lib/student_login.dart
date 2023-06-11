@@ -38,7 +38,7 @@ class _sloginwindowState extends State<sloginwindow> {
   String name="";
   String year="";
   String branch="";
-  String batch="";
+  var point=0;
   bool _isObscure = true;
 
   @override
@@ -98,23 +98,6 @@ class _sloginwindowState extends State<sloginwindow> {
                     fillColor: Colors.white,
                     border: OutlineInputBorder(),
                     labelText: 'Branch',
-                  ),
-                ),
-              ):Container(),
-              !isLogin? Container(
-                padding: const EdgeInsets.all(10),
-                child: TextFormField(
-                  onSaved: (value){
-                    setState(() {
-                      batch=value!;
-                    });
-                  },
-                  key:ValueKey('Batch'),
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(),
-                    labelText: 'Batch',
                   ),
                 ),
               ):Container(),
@@ -199,7 +182,7 @@ class _sloginwindowState extends State<sloginwindow> {
                         _formkey.currentState!.save();
                         isLogin
                             ? AuthServices.signinUser(email, password, context)
-                            : AuthServices.signupUser(email, password, name,role,year,branch,batch,context);
+                            : AuthServices.signupUser(email, password, name,role,year,branch,point,context);
                       }
                     },
                   )
