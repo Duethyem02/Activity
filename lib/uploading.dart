@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:activity_point_monitoring_project/student_profile.dart';
 import 'package:activity_point_monitoring_project/textextract.dart';
@@ -9,12 +7,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
-import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
-import 'package:dio/dio.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-
+import 'knn.dart';
 
 
 class PdfUploader extends StatefulWidget {
@@ -25,6 +20,8 @@ class PdfUploader extends StatefulWidget {
 }
 
 class _PdfUploaderState extends State<PdfUploader> {
+  TextEditingController urlController = TextEditingController();
+
   final FirebaseFirestore _firebaseFirestore=FirebaseFirestore.instance;
   List<Map<String,dynamic>> pdfData = [];
   String? get userId => getUserId();
@@ -43,7 +40,7 @@ class _PdfUploaderState extends State<PdfUploader> {
       final reference =await FirebaseStorage.instance.ref('pdfs/$userId/$fileName');
       final uploadTask = reference.putData(file);
       await uploadTask;
-      final downloadLink = await reference. getDownloadURL();
+      final downloadLink = await reference.getDownloadURL();
       return downloadLink;
     } catch (e, st) {
       print(e);
@@ -99,23 +96,23 @@ class _PdfUploaderState extends State<PdfUploader> {
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: InkWell(
+              child:
+              InkWell(
                   onTap: () async {
+                    final pdfUrl = pdfData[index]['url'];
+                    // final userUrl = urlController.text.trim();
                     String? extractedText= await extractTextFromPDF(pdfData[index]['url']);
-                    List<String> words = extractedText.split(' ');
-                    List<String> listOfValues = ['coursera','participation','nptel','sports','arts','attended'];
-                    List<String> matchedWords = [];
-                    for (String word in words) {
-                      if (listOfValues.contains(word.toLowerCase())) {
-                        matchedWords.add(word);
-                      }
-                    }
-                    print(words);
-
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context)=>
-                            PdfViewerScreen(pdfUrl: pdfData[index]['url'])));
+                    final initialUrl = 'https://docs.google.com/viewer?url=${Uri.encodeComponent(pdfUrl)}';
+                    final pp=Uri.parse(initialUrl);
+                    launch(initialUrl);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              KNNAlgorithm(text:extractedText),
+                        ));
                   },
+
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(),
@@ -123,12 +120,12 @@ class _PdfUploaderState extends State<PdfUploader> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Flexible(child: Image.network('https://th.bing.com/th/id/OIP.9IRAdWdQZ2Dfwp86yYQ1CgHaIz?pid=ImgDet&rs=1',width: 200,height: 200,fit: BoxFit.cover,)),
-                        Flexible(child: Text(
-                                  pdfData[index]['name'],
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ),),
+                        Image.network('https://th.bing.com/th/id/OIP.9IRAdWdQZ2Dfwp86yYQ1CgHaIz?pid=ImgDet&rs=1',width: 200,height: 200,fit: BoxFit.cover,),
+                        Text(
+                          pdfData[index]['name'],
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
                         )
                       ],
                     ),
@@ -144,58 +141,4 @@ class _PdfUploaderState extends State<PdfUploader> {
 
   }
 }
-
-class PdfViewerScreen extends StatefulWidget {
-  final String pdfUrl;
-  const PdfViewerScreen({Key? key, required this.pdfUrl}) : super(key: key);
-  @override
-  State<PdfViewerScreen> createState() => _PdfViewerScreenState();
-}
-
-class _PdfViewerScreenState extends State<PdfViewerScreen> {
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: const Text('Syncfusion Flutter PDF Viewer'),
-  //     ),
-  //     body: SfPdfViewer.network(
-  //       widget.pdfUrl,
-  //     ),
-  //   );
-  // }
-  //bool _isLoading = true;
-  PDFDocument? _pdf;
-
-  void _loadFile() async {
-    // final downloadLink = widget.pdfUrl;
-    // final viewableLink = downloadLink.replaceAll('alt=media', 'alt=embed');
-    // Load the pdf file from the internet
-    _pdf = await PDFDocument.fromURL(
-        widget.pdfUrl);
-
-    setState(() {
-      //_isLoading = false;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadFile();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('PDF'),
-      // ),
-      body: Center(
-          child: _pdf!= null
-              ?PDFViewer(document: _pdf!)
-              : const Center(child: CircularProgressIndicator())),
-    );
-  }
-}
-
 
