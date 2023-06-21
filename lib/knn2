@@ -1,0 +1,78 @@
+import 'package:flutter/material.dart';
+
+class Word {
+  String text;
+  int activityPoints;
+
+  Word({required this.text, required this.activityPoints});
+}
+
+class KNNAlgorithm extends StatefulWidget {
+  final String text;
+  //final String point;
+  const KNNAlgorithm({Key? key, required this.text,/*required this.point*/}) : super(key: key);
+  @override
+  KNNAlgorithmState createState() => KNNAlgorithmState();
+}
+
+class _KNNAlgorithmState extends State<KNNAlgorithm> {
+  static List<Word> trainedWords = [
+    Word(text: 'coursera', activityPoints: 50),
+    Word(text: 'second', activityPoints: 8),
+    Word(text: 'third', activityPoints: 5),
+    // Add more trained words and their activity points
+  ];
+
+  static int knnAlgorithm(String sentence, int k) {
+    String words1 = sentence.replaceAll('\n', '').replaceAll('.', '');
+    List<String>words=words1.split(' ');
+    List<String> uniqueWords = words.toSet().toList(); // Get unique words
+    print(uniqueWords);
+    int totalPoints = 0;
+
+    for (String word in uniqueWords) {
+      int? nearestPoints = findNearestPoints(word, k);
+      if (nearestPoints != null) {
+        totalPoints += nearestPoints;
+      }
+    }
+
+    return totalPoints;
+  }
+
+  static int? findNearestPoints(String word, int k) {
+    List<Word> nearestNeighbors = trainedWords;
+    nearestNeighbors.sort((a, b) => calculateDistance(a.text, word).compareTo(calculateDistance(b.text, word)));
+    nearestNeighbors = nearestNeighbors.sublist(0, k);
+
+    int? totalPoints = nearestNeighbors
+        .where((neighbor) => neighbor.text == word)
+        .map((neighbor) => neighbor.activityPoints)
+        .fold<int?>(null, (sum, points) => sum != null ? sum + points : points);
+
+    return totalPoints;
+  }
+
+  static int calculateDistance(String word1, String word2) {
+    // Implement distance calculation, e.g., edit distance or similarity metrics
+    // Return the calculated distance as an integer value
+    return 0; // Placeholder value, replace with actual distance calculation
+  }
+  void processInput(String input) {
+    int points = knnAlgorithm(input, 3);
+    print('Activity points: $points');
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    processInput(widget.text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold();
+  }
+}
