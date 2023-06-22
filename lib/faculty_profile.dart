@@ -2,6 +2,7 @@ import 'package:activity_point_monitoring_project/uploading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserP {
   String uid;
@@ -335,20 +336,11 @@ class _CertificateviewState extends State<Certificateview> {
               padding: const EdgeInsets.all(8.0),
               child: InkWell(
                   onTap: () async {
-                    // String? extractedText= await extractTextFromPDF(pdfData[index]['url']);
-                    // List<String> words = extractedText.split(' ');
-                    // List<String> listOfValues = ['coursera','participation','nptel','sports','arts','attended'];
-                    // List<String> matchedWords = [];
-                    // for (String word in words) {
-                    //   if (listOfValues.contains(word.toLowerCase())) {
-                    //     matchedWords.add(word);
-                    //   }
-                    // }
-                    // print(words);
-
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context)=>
-                            PdfViewerScreen(pdfUrl: pdfData[index]['url'])));
+                    final pdfUrl = pdfData[index]['url'];
+                    // final userUrl = urlController.text.trim();
+                    final initialUrl = 'https://docs.google.com/viewer?url=${Uri.encodeComponent(pdfUrl)}';
+                    final pp=Uri.parse(initialUrl);
+                    launch(initialUrl);
                   },
                   child: Container(
                     decoration: BoxDecoration(
