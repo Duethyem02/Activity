@@ -11,6 +11,30 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'knn.dart';
 
+class UserP {
+  String uid;
+  String Branch;
+  String Name;
+  String Year;
+  String email;
+  String rool;
+  int Point;
+
+  UserP({required this.uid,required this.Branch, required this.Name, required this.Year,required this.email,required this.rool,required this.Point});
+
+  factory UserP.fromFirestore(DocumentSnapshot doc) {
+    Map data = doc.data() as Map;
+    return UserP(
+      uid: doc.id,
+      Branch: data['Branch'],
+      Name: data['Name'],
+      Year: data['Year'],
+      email: data['email'],
+      rool: data['rool'],
+      Point:data['Point'],
+    );
+  }
+}
 
 class PdfUploader extends StatefulWidget {
   PdfUploader({Key? key,}) : super(key: key);
@@ -21,11 +45,27 @@ class PdfUploader extends StatefulWidget {
 
 class _PdfUploaderState extends State<PdfUploader> {
   TextEditingController urlController = TextEditingController();
-
+  final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
   final FirebaseFirestore _firebaseFirestore=FirebaseFirestore.instance;
   List<Map<String,dynamic>> pdfData = [];
   String? get userId => getUserId();
+  String extractedText="";
   var email;
+  get point=>getpoint(userId);
+
+   Future<int?> getpoint(String? id)  async {
+     QuerySnapshot snapshot = await _usersCollection.where(
+         'email', isEqualTo: id).get();
+     List<DocumentSnapshot> documents = snapshot.docs;
+
+    for (DocumentSnapshot doc in documents) {
+      // Access data within the document
+      Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+     if(data!=null){
+        return data['Point'];
+     }
+    }
+  }
   String? getUserId(){
     final User? user=FirebaseAuth.instance.currentUser;
     if(user==null){
@@ -60,6 +100,13 @@ class _PdfUploaderState extends State<PdfUploader> {
         "url":downloadLink,
       });
       getAllPdf();
+      extractedText= await extractTextFromPDF(downloadLink);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+                KNNAlgorithm(text:extractedText,/*point:point*/),
+          ));
     }
   }
   void getAllPdf() async{
@@ -101,16 +148,12 @@ class _PdfUploaderState extends State<PdfUploader> {
                   onTap: () async {
                     final pdfUrl = pdfData[index]['url'];
                     // final userUrl = urlController.text.trim();
-                    String? extractedText= await extractTextFromPDF(pdfData[index]['url']);
+                    //extractedText= await extractTextFromPDF(pdfData[index]['url']);
+
                     final initialUrl = 'https://docs.google.com/viewer?url=${Uri.encodeComponent(pdfUrl)}';
                     final pp=Uri.parse(initialUrl);
                     launch(initialUrl);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              KNNAlgorithm(text:extractedText),
-                        ));
+
                   },
 
                   child: Container(
@@ -141,4 +184,6 @@ class _PdfUploaderState extends State<PdfUploader> {
 
   }
 }
+
+
 
