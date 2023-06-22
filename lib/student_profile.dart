@@ -10,8 +10,9 @@ class UserP {
   String Year;
   String email;
   String rool;
+  int Point;
 
-  UserP({required this.uid,required this.Branch, required this.Name, required this.Year,required this.email,required this.rool});
+  UserP({required this.uid,required this.Branch, required this.Name, required this.Year,required this.email,required this.rool,required this.Point});
 
   factory UserP.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data() as Map;
@@ -22,6 +23,7 @@ class UserP {
       Year: data['Year'],
       email: data['email'],
       rool: data['rool'],
+      Point:data['Point'],
     );
   }
 }
@@ -89,7 +91,7 @@ class Sprofile extends StatelessWidget {
                         fontWeight: FontWeight.bold
                     ),
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
                   Text(
                     'Branch',
                     style: TextStyle(
@@ -107,7 +109,7 @@ class Sprofile extends StatelessWidget {
                         fontWeight: FontWeight.bold
                     ),
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
                   Text(
                     'Year',
                     style: TextStyle(
@@ -125,43 +127,25 @@ class Sprofile extends StatelessWidget {
                         fontWeight: FontWeight.bold
                     ),
                   ),
-                  SizedBox(height: 30),
-                  /*Text(
-          'Batch',
-          style: TextStyle(
-              color: Colors.grey,
-              letterSpacing: 2
-          ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          'E',
-          style: TextStyle(
-              color: Colors.black,
-              letterSpacing: 2,
-              fontSize: 28,
-              fontWeight: FontWeight.bold
-          ),
-        ),
-        SizedBox(height: 30),
-        Text(
-          'Branch',
-          style: TextStyle(
-              color: Colors.grey[600],
-              letterSpacing: 2
-          ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          'EEE',
-          style: TextStyle(
-              color: Colors.black,
-              letterSpacing: 2,
-              fontSize: 28,
-              fontWeight: FontWeight.bold
-          ),
-        ),
-        SizedBox(height: 30),*/
+                  SizedBox(height: 20),
+                  Text(
+                    'Points',
+                    style: TextStyle(
+                        color: Colors.grey[600],
+                        letterSpacing: 2
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    user.Point.toString(),
+                    style: TextStyle(
+                        color: Colors.black,
+                        letterSpacing: 2,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  SizedBox(height: 20),
                   Row(
                     children: <Widget>[
                       Icon(
@@ -180,8 +164,7 @@ class Sprofile extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
-                  SizedBox(height: 30,),
+                  )
                 ],
               ),
             );
