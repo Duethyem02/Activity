@@ -1,5 +1,6 @@
-import 'dart:math';
-
+import 'package:activity_point_monitoring_project/student_profile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Word {
@@ -11,122 +12,127 @@ class Word {
 
 class KNNAlgorithm extends StatefulWidget {
   final String text;
-  //final String point;
   const KNNAlgorithm({Key? key, required this.text,/*required this.point*/}) : super(key: key);
   @override
   _KNNAlgorithmState createState() => _KNNAlgorithmState();
 }
 
 class _KNNAlgorithmState extends State<KNNAlgorithm> {
-  final List<Map<String, dynamic>> activities = [
-    {
-      'Activity': 'Coursera',
-      'Level': 1,
-      'Achievement Levels (I-V)': '- - - - -',
-      'Activity Points': 50,
-      'Approval Documents': 'Certificate/Letter',
-    },
-    {
-      'Activity': 'NCC',
-      'Level': 1,
-      'Achievement Levels (I-V)': '- - - - -',
-      'Activity Points': 60,
-      'Approval Documents': 'Certificate/Letter',
-    },
-    {
-      'Activity': 'NSS',
-      'Level': 1,
-      'Achievement Levels (I-V)': '- - - - -',
-      'Activity Points': 60,
-      'Approval Documents': 'Certificate/Letter',
-    },
-    {
-      'Activity': 'Sports',
-      'Level': 3,
-      'Achievement Levels (I-V)': '8 15 25 40 60',
-      'Activity Points': 60,
-      'Approval Documents': 'Certificate/Letter',
-    },
-    // Add the rest of the activities here
+  late int newpoint;
+  final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
+  final FirebaseFirestore _firebaseFirestore=FirebaseFirestore.instance;
+  String? get userId => getUserId();
+  var email;
+  var points;
+
+  // Future<int?> getpoint(String? id)  async {
+  //   QuerySnapshot snapshot = await _usersCollection.where(
+  //       'email', isEqualTo: id).get();
+  //   List<DocumentSnapshot> documents = snapshot.docs;
+  //
+  //   for (DocumentSnapshot doc in documents) {
+  //     // Access data within the document
+  //     Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+  //     if(data!=null){
+  //       point= data['Point'];
+  //     }
+  //   }
+  // }
+  String? getUserId(){
+    final User? user=FirebaseAuth.instance.currentUser;
+    if(user==null){
+      return null;
+    }
+    final String uid=user.uid;
+    email=user.email;
+    return uid;
+  }
+  static List<Word> trainedWords = [
+    Word(text: 'coursera', activityPoints: 50),
+    Word(text: 'ncc', activityPoints: 60),
+    Word(text: 'nss', activityPoints: 60),
+    Word(text: 'nptel', activityPoints: 50),
+    Word(text: 'internship', activityPoints: 20),
   ];
 
-  final k = 3; // Number of nearest neighbors to consider
-
-  int activityPoints =0;//widget.point;
-  String enteredActivity = '';
-
-  void calculateActivityPoints() {
-    final studentData = [1, 0]; // Replace with the student's activity level and achievement
-
-    final distances = <double>[];
-    for (var activity in activities) {
-      final activityData = [activity['Activity'],activity['Level'], activity['Activity Points']];
-      final distance = euclideanDistance(studentData, activityData);
-      distances.add(distance);
+  static int knnAlgorithm(String sentence, int k) {
+    var enteredActivity = sentence;
+  String words1 = enteredActivity.replaceAll('\n',' ').replaceAll(',',' ').replaceAll('.',' ');
+  List<String>words=words1.split(' ');
+  List<String> uniqueWords = words.toSet().toList(); // Get unique words
+  List<String> match=['coursera','nptel','ncc','nss','internship'];
+  List<String> matchingWord = [];
+  for (String word in match) {
+    if (words1.toLowerCase().contains(word.toLowerCase())) {
+      matchingWord.add(word);
+      break;
     }
-
-    final sortedIndices = List<int>.generate(activities.length, (index) => index)
-      ..sort((a, b) => distances[a].compareTo(distances[b]));
-
-    final nearestNeighbors = sortedIndices.take(k).toList();
-
-    final predictedPoints = <int>[];
-    for (var neighborIndex in nearestNeighbors) {
-      final neighbor = activities[neighborIndex];
-      final points = neighbor['Activity Points'];
-      predictedPoints.add(points);
-    }
-
-    final totalPoints = predictedPoints.reduce((a, b) => a + b);
-
-    setState(() {
-      activityPoints += totalPoints;
-      print(activityPoints);
-    });
   }
+  print(matchingWord);
+  int totalPoints = 0;
 
-  double euclideanDistance(List<num> a, List<dynamic> b) {
-    var distanceSquared = 0.0;
-    for (var i = 0; i < a.length; i++) {
-      if (a[i] is String && b[i] is String) {
-        distanceSquared += (a[i] as String).compareTo(b[i] as String);
-      } else {
-        distanceSquared += pow(a[i] - b[i], 2);
+    for (String word in matchingWord) {
+      int? nearestPoints = findNearestPoints(word, k);
+      if (nearestPoints != null) {
+        totalPoints += nearestPoints;
       }
     }
-    return sqrt(distanceSquared);
+
+    return totalPoints;
   }
 
-  // void onActivityEntered(String activity) {
-  //   enteredActivity = activity;
-  //   calculateActivityPoints();
-  // }
+  static int? findNearestPoints(String word, int k) {
+    List<Word> nearestNeighbors = trainedWords;
+    nearestNeighbors.sort((a, b) => calculateDistance(a.text, word).compareTo(calculateDistance(b.text, word)));
+    nearestNeighbors = nearestNeighbors.sublist(0, k);
 
-  void onActivityEntered(String text) {
-    enteredActivity = text;
-    String words1 = enteredActivity.replaceAll('\n', '').replaceAll('.', '');
-    List<String>words=words1.split(' ');
-    List<String> uniqueWords = words.toSet().toList(); // Get unique words
-    List<String> match=['Coursera','NPTL'];
-    for(String word in uniqueWords){
-      for(String word2 in match){
-        var regex = RegExp(word2.toLowerCase());
-        if(regex.hasMatch(word.toLowerCase())){
-          print(word2);
-        }
-      }
-    }
-    calculateActivityPoints();
+    int? totalPoints = nearestNeighbors
+        .where((neighbor) => neighbor.text == word)
+        .map((neighbor) => neighbor.activityPoints)
+        .fold<int?>(null, (sum, points) => sum != null ? sum + points : points);
+
+    return totalPoints;
   }
-  // void processInput(String input) {
-  //   int points = knnAlgorithm(input, 3);
-  //   print('Activity points: $points');
-  // }
 
+  static int calculateDistance(String word1, String word2) {
+    // Implement distance calculation, e.g., edit distance or similarity metrics
+    // Return the calculated distance as an integer value
+    return 0; // Placeholder value, replace with actual distance calculation
+  }
+  void processInput(String input) {
+    points = knnAlgorithm(input, 3);
+    print('Activity points: $points');
+    // int oldpoint=point ;
+    // newpoint=points;
+    //
+    // print('Activity points: $newpoint');
+    updateValue();
+  }
+
+  Future<void> updateValue() async {
+       User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      String uid = user.uid;
+      String email = user.email!;
+
+      DocumentReference userDoc = FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid);
+
+      await userDoc.update({'Point': points});
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Sprofile(uid: email)));
+    }}
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    onActivityEntered(widget.text);
+   // getpoint(userId);
+    processInput(widget.text);
   }
 
   @override
@@ -135,4 +141,3 @@ class _KNNAlgorithmState extends State<KNNAlgorithm> {
     return Scaffold();
   }
 }
-
