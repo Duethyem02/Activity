@@ -18,7 +18,7 @@ class AuthServices {
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password).then((value) => {postDetailsToFirestore(email, name,role,year,branch,point)})
-          .catchError((e) {});;
+          .catchError((e) {});
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Successfull...!')));
       return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Home()));
