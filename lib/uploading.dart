@@ -105,7 +105,7 @@ class _PdfUploaderState extends State<PdfUploader> {
           context,
           MaterialPageRoute(
             builder: (BuildContext context) =>
-                KNNAlgorithm(text:extractedText,/*point:point*/),
+                KNNAlgorithm(inputText:extractedText,/*point:point*/),
           ));
     }
   }
