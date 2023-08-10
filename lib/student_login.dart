@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import './email_password_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:activity_point_monitoring_project/forgot_password.dart';
 
@@ -13,7 +12,7 @@ class StudentLogin extends StatelessWidget {
     return Scaffold(
       backgroundColor: HexColor('#6495ED'),
       appBar: AppBar(
-        title: Text('Student Page',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+        title: const Text('Student Page',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
         centerTitle: true,
         backgroundColor: HexColor('#4169E1'),
       ),
@@ -39,6 +38,11 @@ class _sloginwindowState extends State<sloginwindow> {
   String year="";
   String branch="";
   var point=0;
+  var mooc=0;
+  var arts=0;
+  var nssncc=0;
+  var sports=0;
+  var internship=0;
   bool _isObscure = true;
 
   @override
@@ -49,7 +53,7 @@ class _sloginwindowState extends State<sloginwindow> {
           key:_formkey,
           child: ListView(
             children: <Widget>[
-              SizedBox(height: 170.0,),
+              const SizedBox(height: 170.0,),
               !isLogin? Container(
                 padding: const EdgeInsets.all(10),
                 child: TextFormField(
@@ -58,7 +62,7 @@ class _sloginwindowState extends State<sloginwindow> {
                       name=value!;
                     });
                   },
-                  key:ValueKey('name'),
+                  key:const ValueKey('name'),
                   decoration: const InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
@@ -75,7 +79,7 @@ class _sloginwindowState extends State<sloginwindow> {
                       year=value!;
                     });
                   },
-                  key:ValueKey('Year'),
+                  key:const ValueKey('Year'),
                   decoration: const InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
@@ -92,7 +96,7 @@ class _sloginwindowState extends State<sloginwindow> {
                       branch=value!;
                     });
                   },
-                  key:ValueKey('Branch'),
+                  key:const ValueKey('Branch'),
                   decoration: const InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
@@ -117,7 +121,7 @@ class _sloginwindowState extends State<sloginwindow> {
                       email=value!;
                     });
                   },
-                  key:ValueKey('email'),
+                  key:const ValueKey('email'),
                   decoration: const InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
@@ -142,7 +146,7 @@ class _sloginwindowState extends State<sloginwindow> {
                       password=value!;
                     });
                   },
-                  key:ValueKey('password'),
+                  key:const ValueKey('password'),
                   obscureText: _isObscure,
                   decoration: const InputDecoration(
                     filled: true,
@@ -182,7 +186,7 @@ class _sloginwindowState extends State<sloginwindow> {
                         _formkey.currentState!.save();
                         isLogin
                             ? AuthServices.signinUser(email, password, context)
-                            : AuthServices.signupUser(email, password, name,role,year,branch,point,context);
+                            : AuthServices.signupUser(email, password, name,role,year,branch,point,mooc,arts,nssncc,sports,internship, context);
                       }
                     },
                   )
