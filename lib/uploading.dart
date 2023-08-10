@@ -19,8 +19,13 @@ class UserP {
   String email;
   String rool;
   int Point;
+  int mooc;
+  int arts;
+  int nssncc;
+  int sports;
+  int internship;
 
-  UserP({required this.uid,required this.Branch, required this.Name, required this.Year,required this.email,required this.rool,required this.Point});
+  UserP({required this.uid,required this.Branch, required this.Name, required this.Year,required this.email,required this.rool,required this.Point,required this.mooc,required this.arts,required this.nssncc,required this.sports,required this.internship});
 
   factory UserP.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data() as Map;
@@ -31,7 +36,12 @@ class UserP {
       Year: data['Year'],
       email: data['email'],
       rool: data['rool'],
-      Point:data['Point'],
+      Point: data['Point'],
+      mooc: data['mooc'],
+      arts: data['arts'],
+      nssncc: data['nssncc'],
+      sports: data['sports'],
+      internship: data['internship'],
     );
   }
 }
@@ -53,17 +63,17 @@ class _PdfUploaderState extends State<PdfUploader> {
   var email;
   get point=>getpoint(userId);
 
-   Future<int?> getpoint(String? id)  async {
-     QuerySnapshot snapshot = await _usersCollection.where(
-         'email', isEqualTo: id).get();
-     List<DocumentSnapshot> documents = snapshot.docs;
+  Future<int?> getpoint(String? id)  async {
+    QuerySnapshot snapshot = await _usersCollection.where(
+        'email', isEqualTo: id).get();
+    List<DocumentSnapshot> documents = snapshot.docs;
 
     for (DocumentSnapshot doc in documents) {
       // Access data within the document
       Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
-     if(data!=null){
+      if(data!=null){
         return data['Point'];
-     }
+      }
     }
   }
   String? getUserId(){
@@ -99,14 +109,16 @@ class _PdfUploaderState extends State<PdfUploader> {
         "name":fileName,
         "url":downloadLink,
       });
-      getAllPdf();
+
       extractedText= await extractTextFromPDF(downloadLink);
+      print(extractedText);
       Navigator.push(
           context,
           MaterialPageRoute(
             builder: (BuildContext context) =>
                 KNNAlgorithm(inputText:extractedText,/*point:point*/),
           ));
+      getAllPdf();
     }
   }
   void getAllPdf() async{
@@ -184,6 +196,3 @@ class _PdfUploaderState extends State<PdfUploader> {
 
   }
 }
-
-
-
