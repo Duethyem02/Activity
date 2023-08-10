@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import './student_login.dart';
 import 'email_password_auth.dart';
 
 
@@ -11,7 +10,7 @@ class FacultyLogin extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(
-        title: Text('Faculty Page'),
+        title: const Text('Faculty Page'),
         centerTitle: true,
         backgroundColor: Colors.grey,
       ),
@@ -45,7 +44,7 @@ class _tloginwindowState extends State<tloginwindow> {
           key:_formkey,
           child: ListView(
             children: <Widget>[
-              SizedBox(height: 170.0,),
+              const SizedBox(height: 170.0,),
               !isLogin? Container(
                 padding: const EdgeInsets.all(10),
                 child: TextFormField(
@@ -54,7 +53,7 @@ class _tloginwindowState extends State<tloginwindow> {
                       name=value!;
                     });
                   },
-                  key:ValueKey('name'),
+                  key:const ValueKey('name'),
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Name',
@@ -69,7 +68,7 @@ class _tloginwindowState extends State<tloginwindow> {
                       university_id=value!;
                     });
                   },
-                  key:ValueKey('University ID'),
+                  key:const ValueKey('University ID'),
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'University ID',
@@ -84,7 +83,7 @@ class _tloginwindowState extends State<tloginwindow> {
                       department=value!;
                     });
                   },
-                  key:ValueKey('Department'),
+                  key:const ValueKey('Department'),
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Department',
@@ -107,7 +106,7 @@ class _tloginwindowState extends State<tloginwindow> {
                       email=value!;
                     });
                   },
-                  key:ValueKey('email'),
+                  key:const ValueKey('email'),
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Email',
@@ -130,7 +129,7 @@ class _tloginwindowState extends State<tloginwindow> {
                       password=value!;
                     });
                   },
-                  key:ValueKey('password'),
+                  key:const ValueKey('password'),
                   obscureText: _isObscured,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -155,7 +154,7 @@ class _tloginwindowState extends State<tloginwindow> {
                         _formkey.currentState!.save();
                         isLogin
                             ? AuthServices.signinUser(email, password, context)
-                            : AuthServices.signupUser(email, password, name,role,university_id,department,0,context);
+                            : AuthServices.signupUser(email, password, name,role,university_id,department,0,0,0,0,0,0,context);
                       }
                     },
                   )
