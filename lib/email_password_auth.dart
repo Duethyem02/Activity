@@ -7,18 +7,17 @@ import 'student_profile.dart';
 
 CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-postDetailsToFirestore(String email,String name, String rool,String year,String branch,int point) async {
+postDetailsToFirestore(String email,String name, String rool,String year,String branch,int point,int mooc,int arts,int nssncc,int sports,int internship) async {
   var user = FirebaseAuth.instance.currentUser;
   CollectionReference ref = FirebaseFirestore.instance.collection('users');
-  ref.doc(user!.uid).set({'email': email, 'rool': rool,'Name':name,'Year':year,'Branch':branch,'Point':point});
+  ref.doc(user!.uid).set({'email': email, 'rool': rool,'Name':name,'Year':year,'Branch':branch,'Point':point,'mooc':mooc,'arts':arts,'nssncc':nssncc,'sports':sports,'internship':internship});
 }
 class AuthServices {
-  static signupUser(String email, String password, String name,String role,String year,String branch,int point,
-      BuildContext context) async {
+  static signupUser(String email, String password, String name,String role,String year,String branch,int point,int mooc,int arts,int nssncc,int sports,int internship, context) async {
     try {
       await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password).then((value) => {postDetailsToFirestore(email, name,role,year,branch,point)})
-          .catchError((e) {});
+          .createUserWithEmailAndPassword(email: email, password: password).then((value) => {postDetailsToFirestore(email, name,role,year,branch,point,mooc,arts,nssncc,sports,internship,)})
+          .catchError((e) {});;
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Successfull...!')));
       return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Home()));
